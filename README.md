@@ -1,5 +1,5 @@
 
-# kotlin-result [![Jitpack](https://jitpack.io/v/com.danneu/kotlin-result.svg)](https://jitpack.io/#com.danneu/kotlin-result)
+# kotlin-result [![Jitpack](https://jitpack.io/v/com.danneu/kotlin-result.svg)](https://jitpack.io/#com.danneu/kotlin-result) [![Build Status](https://travis-ci.org/danneu/kotlin-result.svg?branch=master)](https://travis-ci.org/danneu/kotlin-result)
 
 A simple `Result` monad for Kotlin.
 
