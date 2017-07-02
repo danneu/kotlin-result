@@ -1,5 +1,5 @@
 
-# kotlin-result
+# kotlin-result [![Jitpack](https://jitpack.io/v/com.danneu/kotlin-result.svg)](https://jitpack.io/#com.danneu/kotlin-result)
 
 A simple `Result` monad for Kotlin.
 
@@ -7,7 +7,7 @@ Similar to <https://github.com/kittinunf/Result> except that
 `ValueType` and `ErrorType` in `Result<ValueType, ErrorType>` 
 are not constrained.
 
-## Install
+## Install [![Jitpack](https://jitpack.io/v/com.danneu/kotlin-result.svg)](https://jitpack.io/#com.danneu/kotlin-result)
 
 ```groovy
 repositories {
