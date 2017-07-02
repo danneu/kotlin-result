@@ -24,8 +24,8 @@ class ResultTests {
 
     @Test
     fun testFold() {
-        assertEquals(Result.Ok<Int, String>(101), Result.ok(100).fold({ it + 1 }, { msg: String -> msg + "-mapped" }))
-        assertEquals(Result.Err<Int, String>("failure-mapped"), Result.err("failure").fold({ n: Int -> n + 1 }, { it + "-mapped" }))
+        assertEquals(101, Result.ok(100).fold({ it + 1 }, { -1 }))
+        assertEquals(-1, Result.err("failure").fold({ n: Int -> n + 1 }, { -1 }))
     }
 
     @Test

@@ -56,12 +56,12 @@ sealed class Result <out V, out E> {
      */
     abstract fun <E2> mapError (transform: (E) -> E2): Result<V, E2>
 
-    /** Transform both sides.
+    /** Reduce both sides into final value.
      *
-     * Result.ok(100).fold({ it + 1 }, { it + "-mapped" }) == Result.ok(101)
-     * Result.err("failure").fold({ it + 1 }, { it + "-mapped" }) == Result.err("failure-mapped")
+     * Result.ok(100).fold({ it + 1 }, { it + "-mapped" }) == 101
+     * Result.err("failure").fold({ it + 1 }, { -1 }) == -1
      */
-    abstract fun <V2, E2> fold (transformValue: (V) -> V2, transformError: (E) -> E2): Result<V2, E2>
+    abstract fun <V2> fold (transformValue: (V) -> V2, transformError: (E) -> V2): V2
 
     // CONCRETE
 
@@ -69,7 +69,7 @@ sealed class Result <out V, out E> {
         override fun toString() = "[Ok: $value]"
         override fun <V2> map(transform: (V) -> V2) = Ok<V2, E>(transform(value))
         override fun <E2> mapError(transform: (E) -> E2) = Ok<V, E2>(value)
-        override fun <V2, E2> fold(transformValue: (V) -> V2, transformError: (E) -> E2) = Ok<V2, E2>(transformValue(value))
+        override fun <V2> fold(transformValue: (V) -> V2, transformError: (E) -> V2) = transformValue(value)
         override fun hashCode() = value?.hashCode() ?: 0
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -81,7 +81,7 @@ sealed class Result <out V, out E> {
         override fun toString() = "[Err: $error]"
         override fun <V2> map(transform: (V) -> V2) = Err<V2, E>(error)
         override fun <E2> mapError(transform: (E) -> E2) = Err<V, E2>(transform(error))
-        override fun <V2, E2> fold(transformValue: (V) -> V2, transformError: (E) -> E2) = Err<V2, E2>(transformError(error))
+        override fun <V2> fold(transformValue: (V) -> V2, transformError: (E) -> V2) = transformError(error)
         override fun hashCode() = error?.hashCode() ?: 0
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
