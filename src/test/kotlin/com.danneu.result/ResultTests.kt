@@ -63,7 +63,7 @@ class ResultTests {
         )
         assertEquals(
             Result.Ok<Int, String>(2),
-            Result.ok(1).flatMapError { Result.ok(2) }
+            Result.err("failure").flatMapError { Result.ok(2) }
         )
     }
 
