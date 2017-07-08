@@ -103,6 +103,10 @@ sealed class Result <out V, out E> {
          *  Result.all(ok(1), err("failure"), ok(3)) == Result.err("failure")
          */
         fun <V, E> all (vararg results: Result<V, E>): Result<List<V>, E> {
+            return all(results.asIterable())
+        }
+        
+        fun <V, E> all (results: Iterable<Result<V, E>>): Result<List<V>, E> {
             return ok(results.map {
                 when (it) {
                     is Ok<V, E> ->
