@@ -7,6 +7,10 @@ Similar to <https://github.com/kittinunf/Result> except that
 `ValueType` and `ErrorType` in `Result<ValueType, ErrorType>` 
 are not constrained.
 
+Extracted from [kog][kog].
+
+[kog]: https://github.com/danneu/kog
+
 ## Install [![Jitpack](https://jitpack.io/v/com.danneu/kotlin-result.svg)](https://jitpack.io/#com.danneu/kotlin-result)
 
 ```groovy
