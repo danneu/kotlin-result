@@ -1,75 +1,59 @@
 package com.danneu.result
 
-// These were moved into extension functions since they violated `out` constraint
-// when implemented as instance methods.
+class UnwrapException(message: String) : Exception(message)
 
-/** Get result value with a fallback value if result is err.
- *
- * Result.ok(42).getOrElse(-1) == 42
- * Result.err("failure").getOrElse(-1) == -1
- */
 fun <V, E> Result<V, E>.getOrElse(default: V): V = when (this) {
     is Result.Ok<V, E> ->
-        this.value
+        value
     is Result.Err<V, E> ->
         default
 }
 
-/** Transform value into a new result.
- *
- * Result.ok(42).flatMap { Result.ok(100) } == Result.ok(100)
- * Result.err("failure").flatMap { Result.ok(100) } == Result.err("failure")
- */
-fun <V, V2, E> Result<V, E>.flatMap(transform: (V) -> Result<V2, E>): Result<V2, E> = when (this) {
+fun <V, V2, E> Result<V, E>.flatMap(transformValue: (V) -> Result<V2, E>): Result<V2, E> = when (this) {
     is Result.Ok<V, E> ->
-        transform(value)
+        transformValue(value)
     is Result.Err<V, E> ->
         Result.Err<V2, E>(error)
 }
 
-/** Transform error into a new result.
- *
- * Result.ok(42).flatMapError { Result.ok(100) } == Result.ok(42)
- * Result.err("failure").flatMapError { Result.ok(100) } == Result.ok(100)
- */
-fun <V, E, E2> Result<V, E>.flatMapError(transform: (E) -> Result<V, E2>): Result<V, E2> = when (this) {
+fun <V, E, E2> Result<V, E>.flatMapError(transformError: (E) -> Result<V, E2>): Result<V, E2> = when (this) {
     is Result.Ok<V, E> ->
         Result.Ok<V, E2>(value)
     is Result.Err<V, E> ->
-        transform(error)
+        transformError(error)
 }
 
 sealed class Result <out V, out E> {
-    // ABSTRACT
+    fun getOrThrow(): V = when (this) {
+        is Ok ->
+            value
+        is Err ->
+            throw UnwrapException("Cannot unwrap $this")
+    }
 
-    /** Transform value.
-     *
-     * Result.ok(100).map { it + 1 } == Result.ok(101)
-     * Result.err("failure").map { it + 1 } == Result.err("failure")
-     */
-    abstract fun <V2> map (transform: (V) -> V2): Result<V2, E>
+    fun <V2> map(transformValue: (V) -> V2): Result<V2, E> = when (this) {
+        is Ok ->
+            Ok<V2, E>(transformValue(value))
+        is Err ->
+            Err<V2, E>(error)
+    }
 
-    /** Transform error.
-     *
-     * Result.ok(100).mapError { it + "-mapped" } == Result.ok(100)
-     * Result.err("failure").map { it + "-mapped" } == Result.err("failure-mapped")
-     */
-    abstract fun <E2> mapError (transform: (E) -> E2): Result<V, E2>
+    fun <E2> mapError(transformError: (E) -> E2): Result<V, E2> = when (this) {
+        is Ok ->
+            Ok<V, E2>(value)
+        is Err ->
+            Err<V, E2>(transformError(error))
+    }
 
-    /** Reduce both sides into final value.
-     *
-     * Result.ok(100).fold({ it + 1 }, { it + "-mapped" }) == 101
-     * Result.err("failure").fold({ it + 1 }, { -1 }) == -1
-     */
-    abstract fun <V2> fold (transformValue: (V) -> V2, transformError: (E) -> V2): V2
+    fun <V2> fold(transformValue: (V) -> V2, transformError: (E) -> V2): V2 = when (this) {
+        is Ok ->
+            transformValue(value)
+        is Err ->
+            transformError(error)
+    }
 
-    // CONCRETE
-
-    class Ok <V, E>(val value: V): Result<V, E>() {
-        override fun toString() = "[Ok: $value]"
-        override fun <V2> map(transform: (V) -> V2) = Ok<V2, E>(transform(value))
-        override fun <E2> mapError(transform: (E) -> E2) = Ok<V, E2>(value)
-        override fun <V2> fold(transformValue: (V) -> V2, transformError: (E) -> V2) = transformValue(value)
+    class Ok <out V, out E> internal constructor (val value: V): Result<V, E>() {
+        override fun toString() = "Result.Ok($value)"
         override fun hashCode() = value?.hashCode() ?: 0
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -77,11 +61,8 @@ sealed class Result <out V, out E> {
         }
     }
 
-    class Err <V, E>(val error: E): Result<V, E>() {
-        override fun toString() = "[Err: $error]"
-        override fun <V2> map(transform: (V) -> V2) = Err<V2, E>(error)
-        override fun <E2> mapError(transform: (E) -> E2) = Err<V, E2>(transform(error))
-        override fun <V2> fold(transformValue: (V) -> V2, transformError: (E) -> V2) = transformError(error)
+    class Err <out V, out E> internal constructor (val error: E): Result<V, E>() {
+        override fun toString() = "Result.Err($error)"
         override fun hashCode() = error?.hashCode() ?: 0
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -97,15 +78,8 @@ sealed class Result <out V, out E> {
 
         // MANY
 
-        /** Combines results into a single result.
-         *
-         *  Result.all(ok(1), ok(2), ok(3)) == Result.ok([1, 2, 3])
-         *  Result.all(ok(1), err("failure"), ok(3)) == Result.err("failure")
-         */
-        fun <V, E> all (vararg results: Result<V, E>): Result<List<V>, E> {
-            return all(results.asIterable())
-        }
-        
+        fun <V, E> all (vararg results: Result<V, E>) = all(results.asIterable())
+
         fun <V, E> all (results: Iterable<Result<V, E>>): Result<List<V>, E> {
             return ok(results.map {
                 when (it) {
@@ -119,6 +93,3 @@ sealed class Result <out V, out E> {
         }
     }
 }
-
-
-

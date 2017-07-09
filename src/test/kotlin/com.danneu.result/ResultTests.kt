@@ -80,4 +80,45 @@ class ResultTests {
             Result.err("failure").mapError { it + "-mapped" }
         )
     }
+
+    @Test
+    fun testAll() {
+        assertEquals(
+            "Result.all combines ok values",
+            Result.Ok<List<Int>, String>(listOf(1, 2, 3)),
+            Result.all(Result.ok(1), Result.ok(2), Result.ok(3))
+        )
+
+        assertEquals(
+            "Result.all becomes first err",
+            Result.Err<List<Int>, String>("a"),
+            Result.all(
+                Result.ok(1), Result.err("a"),
+                Result.ok(2), Result.err("b"),
+                Result.ok(3), Result.err("c")
+            )
+        )
+    }
+
+    @Test
+    fun getOrThrowOk() {
+        assertEquals("Result.getOrThrow() returns Result.Ok value", 42, Result.ok(42).getOrThrow())
+    }
+
+    @Test(expected = UnwrapException::class)
+    fun getOrThrowErr() {
+        Result.err(42).getOrThrow()
+    }
+
+    @Test
+    fun testEquals() {
+        assertEquals(Result.ok(42), Result.ok(42))
+        assertEquals(Result.err("failure"), Result.err("failure"))
+        assertEquals(Result.ok(null), Result.ok(null))
+        assertEquals(Result.err(null), Result.err(null))
+        assertNotEquals(Result.ok(null), Result.err(null))
+        assertNotEquals(Result.ok(42), Result.err("failure"))
+        assertNotEquals(Result.ok(42), Result.ok(-42))
+        assertNotEquals(Result.err("failure A"), Result.err("failure B"))
+    }
 }
