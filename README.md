@@ -63,11 +63,11 @@ val errResult = Result.err("failure")
 
 #### `.getOrThrow()`
 
-Force-unwrap a result value.
+Force-unwrap a result value. 
 
 ```kotlin
 Result.ok(42).getOrThrow() == 42
-Result.err("failure").getOrThrow() // throws UnwrapException
+Result.err("failure").getOrThrow() // throws com.danneu.result.UnwrapException
 ```
 
 #### `.getOrElse()`
