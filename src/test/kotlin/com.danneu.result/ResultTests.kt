@@ -17,9 +17,15 @@ class ResultTests {
     }
 
     @Test
-    fun testGetOrElse() {
+    fun testGetOrElseValue() {
         assertEquals(100, Result.ok(100).getOrElse(-1))
         assertEquals(-1, Result.err("failure").getOrElse(-1))
+    }
+
+    @Test
+    fun testGetOrElseTransform() {
+        assertEquals(100, Result.ok(100).getOrElse { -1 })
+        assertEquals("failure-transformed", Result.err("failure").getOrElse { it + "-transformed" })
     }
 
     @Test

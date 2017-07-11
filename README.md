@@ -11,9 +11,10 @@ Extracted from [kog](https://github.com/danneu/kog).
 - [Install](#install-)
 - [Usage](#usage)
   * [Creating Results](#creating-results)
-  * [Transforming Results](#transforming-results)
+  * [Unwrapping Results](#unwrapping-results)
     + [`.getOrThrow()`](#getorthrow)
     + [`.getOrElse()`](#getorelse)
+  * [Transforming Results](#transforming-results)
     + [`.map()`](#map)
     + [`.mapError()`](#maperror)
     + [`.fold()`](#fold)
@@ -59,7 +60,7 @@ val okResult = Result.ok(42)
 val errResult = Result.err("failure")
 ```
 
-### Transforming Results
+### Unwrapping Results
 
 #### `.getOrThrow()`
 
@@ -78,6 +79,16 @@ Unwrap a result value with a fallback in case of error.
 Result.ok(42).getOrElse(-1) == 42
 Result.err("failure").getOrElse(-1) == -1
 ```
+
+Or pass in a function if you want to inspect or transform the error.
+
+```kotlin
+Result.err("failure").getOrElse { message ->
+    message + "-transformed" 
+} == "failure-transformed"
+```
+
+### Transforming Results
 
 #### `.map()`
 

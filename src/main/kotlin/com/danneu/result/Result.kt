@@ -2,11 +2,18 @@ package com.danneu.result
 
 class UnwrapException(message: String) : Exception(message)
 
-fun <V, E> Result<V, E>.getOrElse(default: V): V = when (this) {
+fun <V, E> Result<V, E>.getOrElse(default: V) = when (this) {
     is Result.Ok<V, E> ->
         value
     is Result.Err<V, E> ->
         default
+}
+
+fun <V, E> Result<V, E>.getOrElse(transformError: (E) -> V) = when (this) {
+    is Result.Ok<V, E> ->
+        value
+    is Result.Err<V, E> ->
+        transformError(error)
 }
 
 fun <V, V2, E> Result<V, E>.flatMap(transformValue: (V) -> Result<V2, E>): Result<V2, E> = when (this) {
