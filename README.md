@@ -110,7 +110,7 @@ Result.err("failure").map { it + "-mapped" } == Result.err("failure-mapped")
 
 #### `.fold()`
 
-Reduce both sides of a final value.
+Reduce both sides into a final value.
 
 ```kotlin
 Result.ok(100).fold({ it + 1 }, { it + "-mapped" }) == 101
