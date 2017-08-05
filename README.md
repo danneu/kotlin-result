@@ -105,7 +105,7 @@ Transform a result's error.
 
 ```kotlin
 Result.ok(100).mapError { it + "-mapped" } == Result.ok(100)
-Result.err("failure").map { it + "-mapped" } == Result.err("failure-mapped")
+Result.err("failure").mapError { it + "-mapped" } == Result.err("failure-mapped")
 ```
 
 #### `.fold()`
