@@ -64,7 +64,7 @@ val errResult = Result.err("failure")
 
 #### `.getOrThrow()`
 
-Force-unwrap a result value. 
+Force-unwrap a result value.
 
 ```kotlin
 Result.ok(42).getOrThrow() == 42
@@ -84,7 +84,7 @@ Or pass in a function if you want to inspect or transform the error.
 
 ```kotlin
 Result.err("failure").getOrElse { message ->
-    message + "-transformed" 
+    message + "-transformed"
 } == "failure-transformed"
 ```
 
@@ -117,7 +117,7 @@ Result.ok(100).fold({ it + 1 }, { it + "-mapped" }) == 101
 Result.err("failure").fold({ it + 1 }, { -1 }) == -1
 ```
 
-#### `.flapMap()`
+#### `.flatMap()`
 
 Transform result into a new result based on its value.
 
@@ -143,7 +143,7 @@ Result.err("failure").flatMapError { Result.ok(100) } == Result.ok(100)
 
 #### `Result.all()`
 
-Combine a list of results into a single result. 
+Combine a list of results into a single result.
 
 Short-circuits on first error.
 
@@ -169,7 +169,7 @@ implemented for Kotlin. However, it constrains
 its Result value to non-null values and its error to instances
 of `Exception`.
 
-This library does not constrain either types. This means that it can 
+This library does not constrain either types. This means that it can
 model nullable result values and errors represented as any type,
 like a simple string error message or an integer error code.
 
