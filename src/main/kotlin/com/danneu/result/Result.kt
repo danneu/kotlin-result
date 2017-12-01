@@ -20,12 +20,12 @@ fun <V, V2, E> Result<V, E>.flatMap(transformValue: (V) -> Result<V2, E>): Resul
     is Result.Ok<V> ->
         transformValue(value)
     is Result.Err<E> ->
-        Result.Err<E>(error)
+        this
 }
 
 fun <V, E, E2> Result<V, E>.flatMapError(transformError: (E) -> Result<V, E2>): Result<V, E2> = when (this) {
     is Result.Ok<V> ->
-        Result.Ok<V>(value)
+        this
     is Result.Err<E> ->
         transformError(error)
 }
@@ -42,12 +42,12 @@ sealed class Result <out V, out E> {
         is Ok ->
             Ok<V2>(transformValue(value))
         is Err ->
-            Err<E>(error)
+            this
     }
 
     fun <E2> mapError(transformError: (E) -> E2): Result<V, E2> = when (this) {
         is Ok ->
-            Ok<V>(value)
+            this
         is Err ->
             Err<E2>(transformError(error))
     }
@@ -94,7 +94,7 @@ sealed class Result <out V, out E> {
                         it.value
                     is Err<E> ->
                         // Short-circuit
-                        return err(it.error)
+                        return it
                 }
             })
         }
