@@ -37,11 +37,11 @@ class ResultTests {
     @Test
     fun testMap() {
         assertEquals(
-            Result.Ok<Int, String>(3),
+            Result.Ok<Int>(3),
             Result.ok(1).map { it + 1 }.map { it + 1 }
         )
         assertEquals(
-            Result.Err<Int, String>("failure"),
+            Result.Err<String>("failure"),
             Result.err("failure").map { n: Int -> n + 1 }.map { n: Int -> n + 1 }
         )
     }
@@ -50,12 +50,12 @@ class ResultTests {
     fun testFlatMap() {
         assertEquals(
             "flatMap transitions ok result",
-            Result.Ok<Int, String>(3),
+            Result.Ok<Int>(3),
             Result.ok(1).flatMap { Result.ok(2) }.flatMap { Result.ok(3) }
         )
         assertEquals(
             "err result stops flatMap",
-            Result.Err<Int, String>("failure"),
+            Result.Err<String>("failure"),
             Result.ok(1).flatMap { Result.err("failure") }.flatMap { Result.ok(3) }
         )
     }
@@ -64,11 +64,11 @@ class ResultTests {
     fun testFlatMapError() {
         assertEquals(
             "ok result stops flatMapError",
-            Result.Ok<Int, String>(1),
+            Result.Ok<Int>(1),
             Result.ok(1).flatMapError { Result.ok(2) }
         )
         assertEquals(
-            Result.Ok<Int, String>(2),
+            Result.Ok<Int>(2),
             Result.err("failure").flatMapError { Result.ok(2) }
         )
     }
@@ -77,12 +77,12 @@ class ResultTests {
     fun testMapError() {
         assertEquals(
             "mapError cannot transition ok result",
-            Result.Ok<Int, String>(1),
+            Result.Ok<Int>(1),
             Result.ok(1).mapError { "failure" }
         )
         assertEquals(
             "mapError transforms err",
-            Result.Err<Int, String>("failure-mapped"),
+            Result.Err<String>("failure-mapped"),
             Result.err("failure").mapError { it + "-mapped" }
         )
     }
@@ -91,13 +91,13 @@ class ResultTests {
     fun testAll() {
         assertEquals(
             "Result.all combines ok values",
-            Result.Ok<List<Int>, String>(listOf(1, 2, 3)),
+            Result.Ok<List<Int>>(listOf(1, 2, 3)),
             Result.all(Result.ok(1), Result.ok(2), Result.ok(3))
         )
 
         assertEquals(
             "Result.all becomes first err",
-            Result.Err<List<Int>, String>("a"),
+            Result.Err<String>("a"),
             Result.all(
                 Result.ok(1), Result.err("a"),
                 Result.ok(2), Result.err("b"),
@@ -126,5 +126,19 @@ class ResultTests {
         assertNotEquals(Result.ok(42), Result.err("failure"))
         assertNotEquals(Result.ok(42), Result.ok(-42))
         assertNotEquals(Result.err("failure A"), Result.err("failure B"))
+    }
+
+    @Test
+    fun testAssignResultOk() {
+        val ok: Result.Ok<String> = Result.ok("ok")
+        val result: Result<String, Float> = ok
+        val result2: Result<String, Int> = ok
+    }
+
+    @Test
+    fun testAssignResultErr() {
+        val err: Result.Err<String> = Result.err("err")
+        val result: Result<Float, String> = err
+        val result2: Result<Int, String> = err
     }
 }
