@@ -1,3 +1,5 @@
+Note: Kotlin has since added `Result` to its stdlib: https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-result/index.html
+
 # kotlin-result [![Jitpack](https://jitpack.io/v/com.danneu/kotlin-result.svg)](https://jitpack.io/#com.danneu/kotlin-result) [![Build Status](https://travis-ci.org/danneu/kotlin-result.svg?branch=master)](https://travis-ci.org/danneu/kotlin-result)
 
 A simple `Result` monad for Kotlin.
